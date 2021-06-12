@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+
+cd ~/sticky
+
+# If we have an entry for the current date, just open the editor normally. If
+# not, insert an entry at the top and position the cursor to start typing
+# immediately.
+
+./timecalc.py
+
+if [[ -f diary.md ]] && grep -qE "^# $(date -I)" diary.md; then
+	$EDITOR diary.md
+else
+	entry="# $(date -I):\n  - \n"
+	if [[ -s diary.md ]]; then
+		sed -i "1i $entry" diary.md
+	else
+		printf "$entry" >> diary.md
+	fi
+	$EDITOR diary.md +2:999
+fi
+
+./timecalc.py
+
+git add .
+git commit -m "Diary at $(date -Iseconds)" --no-gpg-sign
