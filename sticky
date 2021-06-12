@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-cd ~/sticky
+cd $(dirname $0)
 $EDITOR sticky.md
 git add .
 git commit -m "Sticky at $(date -Iseconds)" --no-gpg-sign
